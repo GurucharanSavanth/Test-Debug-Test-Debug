@@ -5,6 +5,7 @@
 
 import pandas as pd
 
+
 def predict_placement(user_data, preprocessor, log_reg, dtree, rf, deep_model):
     # Convert user input into a DataFrame to match training data format
     user_df = pd.DataFrame([user_data])

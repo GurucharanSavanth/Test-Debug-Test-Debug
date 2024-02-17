@@ -8,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
+
 # Function to load and preprocess data
 def load_and_preprocess_data(file_path):
     # Load the dataset from a local file
@@ -55,8 +56,10 @@ def load_and_preprocess_data(file_path):
 
     # Returning the processed datasets and the preprocessor for future use
     return X_train, X_test, y_train, y_test, preprocessor
-# if __name__ == '__main__':
-#     load_and_preprocess_data("Placement_Data_Full_Class.csv")
+
+
+if __name__ == '__main__':
+    load_and_preprocess_data("Placement_Data_Full_Class.csv")
 
 # Future Development: 
 # 1. Explore more sophisticated imputation methods based on data distribution.
