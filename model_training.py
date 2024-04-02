@@ -1,4 +1,5 @@
 # model_training.py
+import os
 
 # Importing necessary libraries
 from sklearn.linear_model import LogisticRegression
@@ -70,27 +71,48 @@ def train_deep_learning_model(X_train, y_train):
         return model, accuracy
 
     # train_and_evaluate_all_models function added for evaluating at same time.
-    def train_and_evaluate_all_models(X_train, y_train, X_test, y_test):
-        # Training and evaluating Logistic Regression
-        log_reg, acc_log_reg = train_and_evaluate_model(LogisticRegression(), X_train, y_train, X_test, y_test,
-                                                        'Logistic Regression')
 
-        # Training and evaluating Decision Tree
-        dtree, acc_dtree = train_and_evaluate_model(DecisionTreeClassifier(), X_train, y_train, X_test, y_test,
-                                                    'Decision Tree')
+    def train_deep_learning_model(X_train, y_train, model_path):
+        if os.path.exists(model_path):
+            return tf.keras.models.load_model(model_path)
 
-        # Training and evaluating Random Forest
-        rf, acc_rf = train_and_evaluate_model(RandomForestClassifier(), X_train, y_train, X_test, y_test,
-                                              'Random Forest')
+        model = tf.keras.Sequential([
+            # Convolutional base
+            tf.keras.layers.Conv2D(32, (3, 3), activation='relu',
+                                   input_shape=(X_train.shape[1], X_train.shape[2], X_train.shape[3])),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
 
-        # Add more models as needed
+            # Dense layers
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(128, activation='relu'),
+            tf.keras.layers.Dense(1, activation='sigmoid')
+        ])
 
-        # Return trained models and their accuracies
-        return {
-            "Logistic Regression": (log_reg, acc_log_reg),
-            "Decision Tree": (dtree, acc_dtree),
-            "Random Forest": (rf, acc_rf)
-        }
+        model.compile(optimizer='adam',
+                      loss='binary_crossentropy',
+                      metrics=['accuracy', "mean_squared_error", "mean_absolute_error"])
+
+        history = model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2)
+
+        # Save the trained model
+        model.save(model_path)
+
+        # Visualize training progress
+        pd.DataFrame(history.history).plot(figsize=(8, 5))
+        plt.grid(True)
+        plt.gca().set_ylim(0, 1)  # set the vertical range to [0-1]
+        plt.show()
+
+        # Optional: Evaluate the model
+        eval_result = model.evaluate(X_train, y_train)
+        print("\n\nTrain loss:", eval_result[0], "Accuracy:", eval_result[1])
+
+        model.summary()
+
+        return model
     # Example usage
     # log_reg, acc_log_reg = train_and_evaluate_model(LogisticRegression(), X_train, y_train, X_test, y_test,
     #                                                 'Logistic Regression')
