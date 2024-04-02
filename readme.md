@@ -53,6 +53,3 @@ Suggestions for future enhancements include:
 Contributions
 
 Contributions to this project are welcome. If you have suggestions for improvement or have identified bugs, please feel free to contribute.
-License
-
-[Specify the license under which this project is released]
